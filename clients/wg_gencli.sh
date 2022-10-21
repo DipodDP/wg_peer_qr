@@ -1,9 +1,9 @@
 #!/bin/sh
 IP_RANGE=10.10.0.0
+WG_CONF_PATH="/etc/wireguard/wg0.conf"
 CURRENT_IP=$(cat state)
 CN="${CURRENT_IP##*.}"
 NEW_IP=10.10.0.$(($CN + 1))
-WG_CONF_PATH="/etc/wireguard/wg0.conf"
 
 mkdir $1
 wg genkey | tee ./$1/client.key |  wg pubkey | tee ./$1/client.key.pub | awk '/^/{>cp client.conf ./$1/client.conf
