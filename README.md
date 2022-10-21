@@ -8,7 +8,11 @@ Installation:
 $ sudo apt install qrencode
 $ cd /etc/wireguard/
 
-clone this repository to /etc/wireguard/ or other directory where wireguard installed
+clone this repository to /etc/wireguard/ or other directory where wireguard installed:
+
+$ git clone git@github.com:DipodDP/wg_peer_qr.git
+
+go to clients dir:
 
 $ cd /etc/wireguard/clients
 
@@ -38,9 +42,8 @@ and change variables IP_RANGE and WG_CONF_PATH if you need.
 
 Run wg_gencli.sh with name of new peer: 
 
+$ chmod u+x wg_gencli.sh
 $ ./wg_gencli.sh newpeer
-
-# WireGuard-go on Ubuntu OpenVZ server 
 
 In result it should create new directory "newpeer" that containes:
 
@@ -50,6 +53,9 @@ client.key.pub - peer public key
 clinet.png - QR-code to connect mobile app
 
 and show new peer text and QR configs in console, so you can instantly connect client app. 
+
+
+# WireGuard-go on Ubuntu OpenVZ server 
 
 This may help (I think it's the only way) to run Wireguard on cheap VPS with an outdated kernel which you have no access to update (like OpenVZ), incompatible with Wireguard.
 
