@@ -1,4 +1,5 @@
-# Automate creating WireGuard peers
+# Wireguard QR script
+## Automate creating WireGuard peers
 
 This script helps you to add peers in Wireguard server config (wg0.conf) and create configs for peers.
 So new Wireguard clients can easily connect with text or QR configs.
@@ -40,7 +41,7 @@ Run wg_gencli.sh with name of new peer:
 
 $ ./wg_gencli.sh newpeer
 
-# WireGuard-go on Ubuntu OpenVZ server 
+## WireGuard-go on Ubuntu OpenVZ server 
 
 In result it should create new directory "newpeer" that containes:
 
