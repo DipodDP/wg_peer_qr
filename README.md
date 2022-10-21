@@ -20,10 +20,16 @@ git clone git@github.com:DipodDP/wg_peer_qr.git
 go to clients dir:
 
 ```shell
-cd /etc/wireguard/clients
+cd /etc/wireguard/wg_peer_qr/clients
 ```
 
 Put in file `state` ip adress of the last peer in wg0.conf, or server IP if there is no peers added. For new peers ip addresses will be added as +1 to last peer IP.
+
+Open file `client.conf`:
+
+```shell
+nano client.conf
+```
 
 File `client.conf` contains template of peers config, like:
 
@@ -51,9 +57,13 @@ nano wg_gencli.sh
 
 and change variables `IP_RANGE` and `WG_CONF_PATH` if you need.
 
-Run `wg_gencli.sh` with name of new peer: 
+Run `wg_gencli.sh` with name of new peer:
+
 ```shell
 chmod u+x wg_gencli.sh
+```
+
+```shell
 ./wg_gencli.sh newpeer
 ```
 
