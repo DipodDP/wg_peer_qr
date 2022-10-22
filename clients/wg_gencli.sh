@@ -16,8 +16,10 @@ qrencode -o ./$1/client.png < ./$1/client.conf
 qrencode -t ansiutf8 < ./$1/client.conf
 echo $NEW_IP > state
 
+systemctl stop wg-quick@wg0
+
 echo "*** Next lines has been added to wg0.conf: ***"
 echo "\n[Peer]\nPublicKey = $(cat ./$1/client.key.pub)\nAllowedIPs = ${NEW_IP}/32\n" | tee -a $WG_CONF_PATH
 
-systemctl restart wg-quick@wg0
+systemctl start wg-quick@wg0
 wg show
