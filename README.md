@@ -89,21 +89,7 @@ This may help (I think it's the only way) to run Wireguard on cheap VPS with an 
 ```shell
 apt-get update && apt-get -y upgrade
 ```
-```shell
-apt-get -y install nano bash-completion wget git
-```
-```shell
-apt-get -y install software-properties-common
-```
-```shell
-add-apt-repository ppa:wireguard/wireguard
-```
-```shell
-apt-get update && apt-get -y upgrade
-```
-```shell
-apt install wireguard-tools --no-install-recommends
-```
+
 Then, to enable forwarding:
 
 ```shell
@@ -247,7 +233,6 @@ Address = 10.10.0.1/24
 ListenPort = 51820
 PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
-SaveConfig = true
 ```
 
 One note, you may need to change eth0 to your proper interface, you can find it with:
