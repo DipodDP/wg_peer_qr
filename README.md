@@ -191,11 +191,19 @@ wireguard-go --version
 Generate private and public keys:
 
 ```shell
+mkdir /etc/wireguard/
+```
+
+```shell
 cd /etc/wireguard/
 ```
 
 ```shell
 umask 077
+```
+
+```shell
+apt install wireguard-dkms wireguard-tools
 ```
 
 ```shell
@@ -215,10 +223,6 @@ cat privatekey
 ```
 
 Define wg0 interface by creating "wg.conf".
-
-```shell
-cd /etc/wireguard/
-```
 
 ```shell
 nano wg0.conf
