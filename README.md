@@ -87,13 +87,19 @@ and show new peer text and QR configs in console, so you can instantly connect c
 This may help (I think it's the only way) to run Wireguard on cheap VPS with an outdated kernel which you have no access to update (like OpenVZ), incompatible with Wireguard.
 
 ```shell
-apt-get update && apt-get -y upgrade
+sudo apt update && sudo apt upgrade -y
+```
+
+Install `make` if not installed:
+
+```shell
+sudo apt install make
 ```
 
 Then, to enable forwarding:
 
 ```shell
-nano /etc/sysctl.conf
+sudo nano /etc/sysctl.conf
 ```
 
 And uncomment the following lines:
@@ -105,16 +111,24 @@ And uncomment the following lines:
 You could do
 
 ```shell
-sysctl -p
+sudo sysctl -p
 ```
 
 just makes sure all updates/upgrades/changes are in place properly
 
 ```shell
-reboot
+sudo reboot
 ```
 
 Now, we are going to use wireguard-go, so need to install `go`. Check it on https://go.dev/dl/, and change `go1.19.2` in each of the following lines if wish to try a differen version:
+
+Get root (or use sudo command)
+
+```shell
+sudo su
+```
+
+Download wireguard-go:
 
 ```shell
 cd /tmp
@@ -160,12 +174,6 @@ MaxSegmentSize             = 1700
 PreallocatedBuffersPerPool = 1024
 ```
 
-Install `make` if not installed:
-
-```shell
-sudo apt install make
-```
-
 Now we can compile it:
 
 ```shell 
@@ -203,7 +211,7 @@ umask 077
 ```
 
 ```shell
-apt install wireguard-dkms wireguard-tools
+apt install wireguard-dkms wireguard-tools -y
 ```
 
 ```shell
@@ -264,7 +272,7 @@ Environment=WG_I_PREFER_BUGGY_USERSPACE_TO_POLISHED_KMOD=1
 Check if `iptables` is installed on your system,  if not you need install it:
 
 ```shell
-apt install iptables
+apt install iptables -y
 ```
 
 Enable and start the service
