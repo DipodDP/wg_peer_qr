@@ -1,9 +1,9 @@
 # Automate creating WireGuard peers
 
-This script helps you to add peers in Wireguard server config (wg0.conf) and create configs for peers.
+This script helps you to add peers in Wireguard server config (`wg0.conf`) and create configs for peers.
 So new Wireguard clients can easily connect with text or QR configs.
 
-Installation:
+## Installation
 
 ```shell
 sudo apt install qrencode
@@ -16,14 +16,21 @@ clone this repository to `/etc/wireguard/` or other directory where wireguard is
 ```shell
 git clone git@github.com:DipodDP/wg_peer_qr.git
 ```
+For ipv4 and ipv6 dualstack support use Wireguard `wg0.conf` like described in [Configuring server wg0 interface]({#wg0-config}).
 
-go to clients dir:
+## Configuration
+
+Then go to clients dir:
 
 ```shell
 cd /etc/wireguard/wg_peer_qr/clients
 ```
+and make copy of `..._template` files with removing `..._template` part in file name.
 
-Put in file `state` ip adress of the last peer in wg0.conf, or server IP if there is no peers added. For new peers ip addresses will be added as +1 to last peer IP.
+Put in file `ipv4state` ip adress of the last peer in wg0.conf, or server local IP if there is no peers added. For new peers ip addresses will be added as +1 to last peer IP.
+
+Put in file `ipv6subnet` your ipv6 subnet, generated with [IPv6 Local Address Range Generator (dnschecker.org)](https://dnschecker.org/ipv6-address-generator.php).
+Last number in peer ipv6 adress equals ipv4 address.
 
 Open file `client.conf`:
 
@@ -35,19 +42,20 @@ File `client.conf` contains template of peers config, like:
 
 ```shell
 [Interface]
-PrivateKey = privatekeytoreplace 
-Address = 10.10.0.0/24
-DNS = 1.1.1.1, 1.0.0.1
+PrivateKey = private_key_to_replace
+Address = client_addresses_to_replace
+DNS = 1.1.1.1, 1.0.0.1, 2606:4700:4700::1111, 2001:67c:2b0::4, 2001:67c:2b0::6
 MTU = 1380
 
 [Peer]
-PublicKey = SERVER_PUBLIC_KEY
-AllowedIPs = 0.0.0.0/0
+PublicKey = server_public_key_to_replace
+AllowedIPs = 0.0.0.0/0, ::/0
 Endpoint = 123.234.56.78:51820
 PersistentKeepalive = 7
 ```
 
-You should change `SERVER_PUBLIC_KEY` and `123.234.56.78:51820` to your real values, and change other settings you need.
+You should change `123.234.56.78:51820` to your endpoint value, and change other settings if you need.
+Do not change `..._to_replace` parameters (need for script working).
 
 Open `wg_gencli.sh`:
 
@@ -55,7 +63,10 @@ Open `wg_gencli.sh`:
 nano wg_gencli.sh
 ```
 
-and change variables `IP_RANGE` and `WG_CONF_PATH` if you need.
+and change variables `WG_KEY_PATH` and `WG_CONF_PATH` if you need.
+
+
+## Peer config creation
 
 Run `wg_gencli.sh` with name of new peer:
 
@@ -77,7 +88,6 @@ In result it should create new directory "newpeer" that containes:
 
 `clinet.png` - QR-code to connect mobile app
 
-
 and show new peer text and QR configs in console, so you can instantly connect client app. 
 
 ---
@@ -85,6 +95,8 @@ and show new peer text and QR configs in console, so you can instantly connect c
 # WireGuard-go on Ubuntu OpenVZ server 
 
 This may help (I think it's the only way) to run Wireguard on cheap VPS with an outdated kernel which you have no access to update (like OpenVZ), incompatible with Wireguard.
+
+## Wireguard-go installation
 
 ```shell
 sudo apt update && sudo apt upgrade -y
@@ -213,6 +225,7 @@ umask 077
 ```shell
 apt install wireguard-dkms wireguard-tools -y
 ```
+## Configuring server wg0 interface {#wg0-config}
 
 ```shell
 wg genkey | tee privatekey | wg pubkey > publickey
@@ -236,12 +249,19 @@ Define wg0 interface by creating "wg.conf".
 nano wg0.conf
 ```
 
-And copy the following into the file (changing private key and address as appropriate). An example address would be 10.10.1.1/24. 
+And copy the following into the file (changing private key and address as appropriate). An example addresses would be 10.10.1.1/24 and fd42:42:42::1/64. 
 
 ```shell
 [Interface]
 PrivateKey = <privatekey>
 Address = 10.10.0.1/24
+Address = fd42:42:42::1/64
+PostUp = ufw route allow in on wg0 out on eth0
+PostUp = iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE
+PostUp = ip6tables -t nat -I POSTROUTING -o eth0 -j MASQUERADE
+PreDown = ufw route delete allow in on wg0 out on eth0
+PreDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+PreDown = ip6tables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
 ListenPort = 51820
 PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
@@ -268,6 +288,7 @@ and add this line directly below:
 `
 Environment=WG_I_PREFER_BUGGY_USERSPACE_TO_POLISHED_KMOD=1 
 `
+## Configuring firewall
 
 Check if `iptables` is installed on your system,  if not you need install it:
 
@@ -292,11 +313,15 @@ systemctl status wg-quick@wg0.service
 Assuming your client is set up correctly, all should flow. Depending on the environment, you may need the following to enable and configure the firewall (ufw firewall):
 
 ```shell
-ufw allow 22/tcp
+sudo ufw allow 22/tcp
 ```
 
 ```shell
-ufw allow 51820/udp
+sudo ufw allow 51820/udp
+```
+
+```shell
+sudo ufw allow OpenSSH
 ```
 
 ```shell
