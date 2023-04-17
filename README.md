@@ -16,7 +16,7 @@ clone this repository to `/etc/wireguard/` or other directory where wireguard is
 ```shell
 git clone git@github.com:DipodDP/wg_peer_qr.git
 ```
-For ipv4 and ipv6 dualstack support use Wireguard `wg0.conf` like described in [Configuring server wg0 interface]({#wg0-config}).
+For ipv4 and ipv6 dualstack support use Wireguard `wg0.conf` like described [here](#configuring-server-wg0-interface).
 
 ## Configuration
 
@@ -225,7 +225,7 @@ umask 077
 ```shell
 apt install wireguard-dkms wireguard-tools -y
 ```
-## Configuring server wg0 interface {#wg0-config}
+## Configuring server wg0 interface
 
 ```shell
 wg genkey | tee privatekey | wg pubkey > publickey
