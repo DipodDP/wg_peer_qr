@@ -90,6 +90,12 @@ In result it should create new directory "newpeer" that containes:
 
 and show new peer text and QR configs in console, so you can instantly connect client app. 
 
+To recall client config run command `peer_conf` with name of peer:
+
+```shell
+./peer_conf.sh newpeer
+```
+
 ---
 
 # WireGuard-go on Ubuntu OpenVZ server 
